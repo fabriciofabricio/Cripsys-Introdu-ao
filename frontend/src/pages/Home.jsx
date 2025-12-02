@@ -6,6 +6,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const Home = () => {
     const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -18,11 +19,23 @@ const Home = () => {
                 setCourses(coursesData);
             } catch (error) {
                 console.error("Error fetching courses:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchCourses();
     }, []);
+
+    if (loading) {
+        return (
+            <MainLayout>
+                <div className="flex items-center justify-center h-[50vh]">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
+                </div>
+            </MainLayout>
+        );
+    }
 
     return (
         <MainLayout>

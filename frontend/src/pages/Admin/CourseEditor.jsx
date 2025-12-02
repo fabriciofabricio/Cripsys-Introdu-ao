@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import MainLayout from '../../layouts/MainLayout';
-import { db } from '../../firebase/config';
+import { db, storage } from '../../firebase/config';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { Save, Plus, ArrowLeft, Video } from 'lucide-react';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { Save, Plus, ArrowLeft, Video, Upload, Image as ImageIcon } from 'lucide-react';
 
 const CourseEditor = () => {
     const { courseId } = useParams();
@@ -12,8 +13,12 @@ const CourseEditor = () => {
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [thumbnail, setThumbnail] = useState('');
     const [modules, setModules] = useState([]);
     const [loading, setLoading] = useState(!isNew);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = React.useRef(null);
 
     useEffect(() => {
         if (!isNew) {
@@ -24,6 +29,7 @@ const CourseEditor = () => {
                     const data = docSnap.data();
                     setTitle(data.title);
                     setDescription(data.description);
+                    setThumbnail(data.thumbnail || '');
                     setModules(data.modules || []);
                 }
                 setLoading(false);
@@ -32,13 +38,51 @@ const CourseEditor = () => {
         }
     }, [courseId, isNew]);
 
+    const handleThumbnailUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        const storageRef = ref(storage, `thumbnails/${Date.now()}_${file.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setUploadProgress(progress);
+            },
+            (error) => {
+                console.error("Upload error:", error);
+                setIsUploading(false);
+                alert("Upload failed");
+            },
+            async () => {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                setThumbnail(downloadURL);
+                setIsUploading(false);
+            }
+        );
+    };
+
     const handleSave = async () => {
         try {
             const id = isNew ? title.toLowerCase().replace(/\s+/g, '-') : courseId;
+
+            // Calculate stats
+            const modulesCount = modules.length;
+            const totalDuration = modules.reduce((acc, module) => {
+                return acc + (module.lessons || []).reduce((lAcc, lesson) => {
+                    return lAcc + (parseFloat(lesson.duration) || 0);
+                }, 0);
+            }, 0);
+
             const courseData = {
                 title,
                 description,
+                thumbnail,
                 modules,
+                modulesCount,
+                duration: totalDuration, // Store total seconds
                 updatedAt: new Date()
             };
 
@@ -104,6 +148,47 @@ const CourseEditor = () => {
                                 rows={4}
                                 className="w-full bg-primary border border-gray-700 rounded p-2 focus:border-accent focus:outline-none"
                             />
+                        </div>
+                    </div>
+                    <div className="bg-secondary p-6 rounded-lg space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Thumbnail</label>
+                            {!thumbnail ? (
+                                <div
+                                    className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-accent cursor-pointer transition"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    <ImageIcon size={32} className="mx-auto text-gray-500 mb-2" />
+                                    <p className="text-gray-400 text-sm">Click to upload thumbnail</p>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleThumbnailUpload}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="relative group">
+                                    <img src={thumbnail} alt="Thumbnail" className="w-full h-48 object-cover rounded-lg" />
+                                    <button
+                                        onClick={() => setThumbnail('')}
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            )}
+                            {isUploading && (
+                                <div className="mt-2">
+                                    <div className="w-full bg-gray-700 rounded-full h-1.5">
+                                        <div
+                                            className="bg-accent h-1.5 rounded-full transition-all duration-300"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

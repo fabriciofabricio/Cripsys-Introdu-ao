@@ -17,6 +17,7 @@ const LessonEditor = () => {
     const [description, setDescription] = useState('');
     const [videoUrl, setVideoUrl] = useState('');
     const [timestamps, setTimestamps] = useState([]);
+    const [duration, setDuration] = useState(0);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isUploading, setIsUploading] = useState(false);
 
@@ -34,6 +35,7 @@ const LessonEditor = () => {
                         setDescription(lesson.description || '');
                         setVideoUrl(lesson.videoUrl);
                         setTimestamps(lesson.timestamps || []);
+                        setDuration(lesson.duration || 0);
                     }
                 }
             };
@@ -100,7 +102,7 @@ const LessonEditor = () => {
                 description,
                 videoUrl,
                 timestamps,
-                duration: '00:00' // TODO: Calculate real duration
+                duration: duration // Store duration in seconds
             };
 
             if (isNew) {
@@ -112,7 +114,20 @@ const LessonEditor = () => {
                 }
             }
 
-            await setDoc(docRef, { modules }, { merge: true });
+            // Recalculate course stats
+            const modulesCount = modules.length;
+            const totalDuration = modules.reduce((acc, module) => {
+                return acc + (module.lessons || []).reduce((lAcc, lesson) => {
+                    return lAcc + (parseFloat(lesson.duration) || 0);
+                }, 0);
+            }, 0);
+
+            await setDoc(docRef, {
+                modules,
+                modulesCount,
+                duration: totalDuration,
+                updatedAt: new Date()
+            }, { merge: true });
             alert('Lesson saved!');
             navigate(`/admin/course/${courseId}`);
         } catch (error) {
@@ -194,6 +209,7 @@ const LessonEditor = () => {
                                     src={videoUrl}
                                     controls
                                     className="w-full rounded bg-black"
+                                    onLoadedMetadata={(e) => setDuration(e.target.duration)}
                                 />
                                 <button
                                     onClick={() => setVideoUrl('')}

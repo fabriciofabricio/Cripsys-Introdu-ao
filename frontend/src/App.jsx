@@ -12,6 +12,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import CourseEditor from './pages/Admin/CourseEditor';
 import LessonEditor from './pages/Admin/LessonEditor';
 import SetupAdmin from './pages/SetupAdmin';
+import Support from './pages/Support';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -60,6 +61,11 @@ const App = () => {
         <Route
           path="/dashboard"
           element={user ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/support"
+          element={user ? <Support /> : <Navigate to="/login" />}
         />
 
         {/* Admin Routes */}

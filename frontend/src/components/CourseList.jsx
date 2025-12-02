@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import { PlayCircle, Clock } from 'lucide-react';
 
 const CourseList = ({ courses }) => {
+    const formatDuration = (seconds) => {
+        if (!seconds) return '0h 00m';
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return `${hours}h ${minutes}m`;
+    };
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
@@ -21,7 +28,7 @@ const CourseList = ({ courses }) => {
                         )}
                         <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs flex items-center space-x-1">
                             <Clock size={12} />
-                            <span>{course.duration || '1h 30m'}</span>
+                            <span>{formatDuration(course.duration)}</span>
                         </div>
                     </div>
 
@@ -30,7 +37,7 @@ const CourseList = ({ courses }) => {
                         <p className="text-gray-400 text-sm line-clamp-2">{course.description}</p>
 
                         <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                            <span>{course.modulesCount || 5} Modules</span>
+                            <span>{course.modulesCount || 0} Modules</span>
                             <span>{course.level || 'Beginner'}</span>
                         </div>
                     </div>

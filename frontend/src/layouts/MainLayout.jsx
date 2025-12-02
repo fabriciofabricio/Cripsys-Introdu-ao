@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { auth } from '../firebase/config';
 import { signOut } from 'firebase/auth';
-import { LogOut, BookOpen, User, Menu, X } from 'lucide-react';
+import { LogOut, BookOpen, User, Menu, X, HelpCircle } from 'lucide-react';
 
 const MainLayout = ({ children }) => {
     const navigate = useNavigate();
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const location = useLocation();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+    // Auto-collapse sidebar on lesson pages
+    React.useEffect(() => {
+        if (location.pathname.includes('/course/')) {
+            setIsSidebarOpen(false);
+        }
+    }, [location.pathname]);
 
     const handleLogout = async () => {
         try {
@@ -42,9 +50,11 @@ const MainLayout = ({ children }) => {
                 {/* Collapsible Sidebar */}
                 <aside
                     className={`
-                        fixed inset-y-0 left-0 z-40 w-64 bg-secondary transform transition-transform duration-300 ease-in-out
+                        bg-secondary shadow-2xl transition-all duration-300 ease-in-out z-40 flex flex-col
+                        fixed inset-y-0 left-0 pt-20 pb-6 px-6 w-64
+                        md:relative md:translate-x-0 md:pt-6 md:inset-auto
                         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-                        pt-20 pb-6 px-6 flex flex-col shadow-2xl
+                        ${isSidebarOpen ? 'md:w-64 md:px-6' : 'md:w-0 md:px-0 md:overflow-hidden'}
                     `}
                 >
                     <button
@@ -54,7 +64,7 @@ const MainLayout = ({ children }) => {
                         <X size={24} />
                     </button>
 
-                    <nav className="flex-1 space-y-2">
+                    <nav className="flex-1 space-y-2 min-w-[12rem]">
                         <Link
                             to="/"
                             onClick={() => setIsSidebarOpen(false)}
@@ -79,9 +89,17 @@ const MainLayout = ({ children }) => {
                             <User size={20} />
                             <span>Admin</span>
                         </Link>
+                        <Link
+                            to="/support"
+                            onClick={() => setIsSidebarOpen(false)}
+                            className="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-white/10 p-2 rounded transition"
+                        >
+                            <HelpCircle size={20} />
+                            <span>Suporte</span>
+                        </Link>
                     </nav>
 
-                    <div className="mt-auto pt-6 border-t border-gray-700">
+                    <div className="mt-auto pt-6 border-t border-gray-700 min-w-[12rem]">
                         <button
                             onClick={handleLogout}
                             className="flex items-center space-x-3 text-gray-400 hover:text-white w-full p-2 rounded transition"
@@ -95,7 +113,7 @@ const MainLayout = ({ children }) => {
                 {/* Overlay for mobile when sidebar is open */}
                 {isSidebarOpen && (
                     <div
-                        className="fixed inset-0 bg-black/50 z-30"
+                        className="fixed inset-0 bg-black/50 z-30 md:hidden"
                         onClick={() => setIsSidebarOpen(false)}
                     ></div>
                 )}

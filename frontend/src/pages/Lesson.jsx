@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
 import VideoPlayer from '../components/VideoPlayer';
-import { db, functions } from '../firebase/config';
+import { db, functions, auth } from '../firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { Play, CheckCircle, Clock, ChevronRight, ChevronDown } from 'lucide-react';
@@ -12,6 +12,7 @@ const Lesson = () => {
     const [course, setCourse] = useState(null);
     const [currentLesson, setCurrentLesson] = useState(null);
     const [isCompleted, setIsCompleted] = useState(false);
+    const [completedLessonIds, setCompletedLessonIds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedModules, setExpandedModules] = useState({});
     const playerRef = useRef(null);
@@ -49,6 +50,23 @@ const Lesson = () => {
                     }
 
                     setCurrentLesson(foundLesson);
+
+                    // Fetch user progress
+                    if (auth.currentUser) {
+                        const progressRef = doc(db, "users", auth.currentUser.uid, "progress", courseId);
+                        const progressSnap = await getDoc(progressRef);
+                        if (progressSnap.exists()) {
+                            const progressData = progressSnap.data();
+                            const completed = progressData.completedLessons || [];
+                            setCompletedLessonIds(completed);
+                            if (foundLesson) {
+                                setIsCompleted(completed.includes(foundLesson.id));
+                            }
+                        } else {
+                            setCompletedLessonIds([]);
+                            setIsCompleted(false);
+                        }
+                    }
                 } else {
                     console.error("Course not found");
                 }
@@ -64,13 +82,30 @@ const Lesson = () => {
 
     const handleComplete = async () => {
         try {
-            setIsCompleted(true);
-            const addCourseCompleted = httpsCallable(functions, 'addCourseCompleted');
-            await addCourseCompleted({ courseId, lessonId: currentLesson?.id });
-            console.log('Progress saved');
+            if (isCompleted) {
+                // Remove completion
+                setIsCompleted(false);
+                setCompletedLessonIds(prev => prev.filter(id => id !== currentLesson?.id));
+                const removeCourseCompleted = httpsCallable(functions, 'removeCourseCompleted');
+                await removeCourseCompleted({ courseId, lessonId: currentLesson?.id });
+                console.log('Progress removed');
+            } else {
+                // Add completion
+                setIsCompleted(true);
+                setCompletedLessonIds(prev => [...prev, currentLesson?.id]);
+                const addCourseCompleted = httpsCallable(functions, 'addCourseCompleted');
+                await addCourseCompleted({ courseId, lessonId: currentLesson?.id });
+                console.log('Progress saved');
+            }
         } catch (error) {
             console.error('Error saving progress:', error);
-            setIsCompleted(false);
+            // Revert state on error
+            setIsCompleted(!isCompleted);
+            if (isCompleted) {
+                setCompletedLessonIds(prev => [...prev, currentLesson?.id]);
+            } else {
+                setCompletedLessonIds(prev => prev.filter(id => id !== currentLesson?.id));
+            }
         }
     };
 
@@ -88,6 +123,7 @@ const Lesson = () => {
     };
 
     const formatTime = (seconds) => {
+        if (!seconds || isNaN(seconds)) return '00:00';
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -144,7 +180,7 @@ const Lesson = () => {
                                                 className={`w-full p-3 pl-4 flex items-center space-x-3 hover:bg-white/5 transition text-left ${lesson.id === currentLesson.id ? 'bg-accent/10 border-l-2 border-accent' : ''
                                                     }`}
                                             >
-                                                {isCompleted && lesson.id === currentLesson.id ? (
+                                                {completedLessonIds.includes(lesson.id) ? (
                                                     <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
                                                 ) : (
                                                     <Play size={14} className={`flex-shrink-0 ${lesson.id === currentLesson.id ? 'text-accent' : 'text-gray-500'}`} />
@@ -153,7 +189,7 @@ const Lesson = () => {
                                                     <p className={`text-sm truncate ${lesson.id === currentLesson.id ? 'text-accent font-medium' : 'text-gray-400'}`}>
                                                         {lesson.title}
                                                     </p>
-                                                    <span className="text-xs text-gray-600">{lesson.duration || '00:00'}</span>
+                                                    <span className="text-xs text-gray-600">{formatTime(lesson.duration)}</span>
                                                 </div>
                                             </a>
                                         ))}

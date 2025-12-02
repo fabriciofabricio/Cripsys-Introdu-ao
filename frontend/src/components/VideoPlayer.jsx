@@ -34,10 +34,9 @@ const VideoPlayer = forwardRef(({ videoUrl, onComplete, isCompleted }, ref) => {
 
                 <button
                     onClick={onComplete}
-                    disabled={isCompleted}
                     className={`flex items-center space-x-2 px-4 py-2 rounded font-medium transition ${isCompleted
-                            ? 'bg-green-500/20 text-green-500 cursor-default'
-                            : 'bg-accent hover:bg-blue-600 text-white'
+                        ? 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
+                        : 'bg-accent hover:bg-blue-600 text-white'
                         }`}
                 >
                     <CheckCircle size={20} />
