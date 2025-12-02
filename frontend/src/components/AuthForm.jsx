@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { auth, db } from '../firebase/config';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { auth } from '../firebase/config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 const AuthForm = () => {
-    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -16,27 +14,18 @@ const AuthForm = () => {
         setError('');
 
         try {
-            if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, password);
-            } else {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                // Create user document in Firestore
-                await setDoc(doc(db, "users", userCredential.user.uid), {
-                    email: email,
-                    role: 'student',
-                    createdAt: new Date()
-                });
-            }
+            await signInWithEmailAndPassword(auth, email, password);
             navigate('/');
         } catch (err) {
-            setError(err.message);
+            setError('Falha no login. Verifique suas credenciais.');
+            console.error(err);
         }
     };
 
     return (
         <div className="max-w-md mx-auto bg-secondary p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-center">
-                {isLogin ? 'Bem-vindo de volta' : 'Criar Conta'}
+                Entrar
             </h2>
 
             {error && (
@@ -72,18 +61,9 @@ const AuthForm = () => {
                     type="submit"
                     className="w-full bg-accent hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
                 >
-                    {isLogin ? 'Entrar' : 'Cadastrar'}
+                    Entrar
                 </button>
             </form>
-
-            <div className="mt-4 text-center">
-                <button
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-sm text-gray-400 hover:text-white transition"
-                >
-                    {isLogin ? "Não tem uma conta? Cadastre-se" : "Já tem uma conta? Entre"}
-                </button>
-            </div>
         </div>
     );
 };

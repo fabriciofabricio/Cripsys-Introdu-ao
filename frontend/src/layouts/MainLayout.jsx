@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { auth } from '../firebase/config';
-import { signOut } from 'firebase/auth';
-import { LogOut, BookOpen, User, Menu, X, HelpCircle } from 'lucide-react';
+import { BookOpen, User, Menu, X, HelpCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const MainLayout = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const { isAdmin } = useAuth();
 
     // Auto-collapse sidebar on lesson pages
     React.useEffect(() => {
@@ -15,15 +15,6 @@ const MainLayout = ({ children }) => {
             setIsSidebarOpen(false);
         }
     }, [location.pathname]);
-
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            navigate('/login');
-        } catch (error) {
-            console.error("Error signing out:", error);
-        }
-    };
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -81,14 +72,16 @@ const MainLayout = ({ children }) => {
                             <User size={20} />
                             <span>Painel</span>
                         </Link>
-                        <Link
-                            to="/admin"
-                            onClick={() => setIsSidebarOpen(false)}
-                            className="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-white/10 p-2 rounded transition"
-                        >
-                            <User size={20} />
-                            <span>Admin</span>
-                        </Link>
+                        {isAdmin && (
+                            <Link
+                                to="/admin"
+                                onClick={() => setIsSidebarOpen(false)}
+                                className="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-white/10 p-2 rounded transition"
+                            >
+                                <User size={20} />
+                                <span>Admin</span>
+                            </Link>
+                        )}
                         <Link
                             to="/support"
                             onClick={() => setIsSidebarOpen(false)}
@@ -99,15 +92,7 @@ const MainLayout = ({ children }) => {
                         </Link>
                     </nav>
 
-                    <div className="mt-auto pt-6 border-t border-gray-700 min-w-[12rem]">
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center space-x-3 text-gray-400 hover:text-white w-full p-2 rounded transition"
-                        >
-                            <LogOut size={20} />
-                            <span>Sair</span>
-                        </button>
-                    </div>
+
                 </aside>
 
                 {/* Overlay for mobile when sidebar is open */}
