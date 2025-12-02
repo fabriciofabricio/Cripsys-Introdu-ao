@@ -71,7 +71,7 @@ const MainLayout = ({ children }) => {
                             className="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-white/10 p-2 rounded transition"
                         >
                             <BookOpen size={20} />
-                            <span>Courses</span>
+                            <span>Cursos</span>
                         </Link>
                         <Link
                             to="/dashboard"
@@ -79,7 +79,7 @@ const MainLayout = ({ children }) => {
                             className="flex items-center space-x-3 text-gray-300 hover:text-white hover:bg-white/10 p-2 rounded transition"
                         >
                             <User size={20} />
-                            <span>Dashboard</span>
+                            <span>Painel</span>
                         </Link>
                         <Link
                             to="/admin"
@@ -105,7 +105,7 @@ const MainLayout = ({ children }) => {
                             className="flex items-center space-x-3 text-gray-400 hover:text-white w-full p-2 rounded transition"
                         >
                             <LogOut size={20} />
-                            <span>Sign Out</span>
+                            <span>Sair</span>
                         </button>
                     </div>
                 </aside>

@@ -143,8 +143,8 @@ const Lesson = () => {
         return (
             <MainLayout>
                 <div className="text-center py-10">
-                    <h2 className="text-2xl font-bold mb-2">Lesson not found</h2>
-                    <p className="text-gray-400">The requested lesson could not be loaded.</p>
+                    <h2 className="text-2xl font-bold mb-2">Aula não encontrada</h2>
+                    <p className="text-gray-400">A aula solicitada não pôde ser carregada.</p>
                 </div>
             </MainLayout>
         );

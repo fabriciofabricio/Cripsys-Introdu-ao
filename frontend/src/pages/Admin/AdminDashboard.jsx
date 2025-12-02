@@ -31,33 +31,33 @@ const AdminDashboard = () => {
     return (
         <MainLayout>
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <h1 className="text-3xl font-bold">Painel Administrativo</h1>
                 <Link
                     to="/admin/course/new"
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center space-x-2 transition"
                 >
                     <Plus size={20} />
-                    <span>Create Course</span>
+                    <span>Criar Curso</span>
                 </Link>
             </div>
 
             {loading ? (
-                <div className="text-center py-10">Loading courses...</div>
+                <div className="text-center py-10">Carregando cursos...</div>
             ) : (
                 <div className="bg-secondary rounded-lg overflow-hidden">
                     <table className="w-full text-left">
                         <thead className="bg-gray-800 text-gray-400 uppercase text-xs">
                             <tr>
-                                <th className="px-6 py-3">Title</th>
-                                <th className="px-6 py-3">Modules</th>
-                                <th className="px-6 py-3">Actions</th>
+                                <th className="px-6 py-3">Título</th>
+                                <th className="px-6 py-3">Módulos</th>
+                                <th className="px-6 py-3">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-700">
                             {courses.length === 0 ? (
                                 <tr>
                                     <td colSpan="3" className="px-6 py-4 text-center text-gray-500">
-                                        No courses found. Create one to get started.
+                                        Nenhum curso encontrado. Crie um para começar.
                                     </td>
                                 </tr>
                             ) : (
@@ -69,11 +69,11 @@ const AdminDashboard = () => {
                                             <Link
                                                 to={`/admin/course/${course.id}`}
                                                 className="text-blue-400 hover:text-blue-300"
-                                                title="Edit"
+                                                title="Editar"
                                             >
                                                 <Edit size={18} />
                                             </Link>
-                                            <button className="text-red-400 hover:text-red-300" title="Delete">
+                                            <button className="text-red-400 hover:text-red-300" title="Excluir">
                                                 <Trash size={18} />
                                             </button>
                                         </td>

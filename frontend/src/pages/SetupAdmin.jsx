@@ -10,7 +10,7 @@ const SetupAdmin = () => {
 
     const handleMakeAdmin = async () => {
         if (!auth.currentUser) {
-            setStatus('You must be logged in.');
+            setStatus('Você precisa estar logado.');
             return;
         }
 
@@ -26,14 +26,14 @@ const SetupAdmin = () => {
                     role: 'admin',
                     createdAt: new Date()
                 });
-                setStatus('User document created and Admin role assigned!');
+                setStatus('Documento de usuário criado e função de Admin atribuída!');
             } else {
                 await setDoc(userRef, { role: 'admin' }, { merge: true });
-                setStatus('Admin role assigned to existing user!');
+                setStatus('Função de Admin atribuída ao usuário existente!');
             }
         } catch (error) {
             console.error(error);
-            setStatus('Error: ' + error.message);
+            setStatus('Erro: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -43,9 +43,9 @@ const SetupAdmin = () => {
         <MainLayout>
             <div className="max-w-md mx-auto bg-secondary p-8 rounded-lg text-center">
                 <Shield size={48} className="mx-auto text-accent mb-4" />
-                <h1 className="text-2xl font-bold mb-4">Admin Setup</h1>
+                <h1 className="text-2xl font-bold mb-4">Configuração de Admin</h1>
                 <p className="text-gray-400 mb-6">
-                    Click the button below to initialize your user account with Admin privileges.
+                    Clique no botão abaixo para inicializar sua conta com privilégios de Admin.
                 </p>
 
                 <button
@@ -53,11 +53,11 @@ const SetupAdmin = () => {
                     disabled={loading}
                     className="bg-accent hover:bg-blue-600 text-white px-6 py-3 rounded font-bold w-full disabled:opacity-50"
                 >
-                    {loading ? 'Processing...' : 'Make Me Admin'}
+                    {loading ? 'Processando...' : 'Me tornar Admin'}
                 </button>
 
                 {status && (
-                    <div className={`mt-4 p-3 rounded ${status.includes('Error') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
+                    <div className={`mt-4 p-3 rounded ${status.includes('Erro') ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}`}>
                         {status}
                     </div>
                 )}

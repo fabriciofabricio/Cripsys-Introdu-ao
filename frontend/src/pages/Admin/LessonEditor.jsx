@@ -59,7 +59,7 @@ const LessonEditor = () => {
             (error) => {
                 console.error("Upload error:", error);
                 setIsUploading(false);
-                alert("Upload failed");
+                alert("Falha no envio");
             },
             async () => {
                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
@@ -72,7 +72,7 @@ const LessonEditor = () => {
     const addTimestamp = () => {
         if (videoRef.current) {
             const time = Math.floor(videoRef.current.currentTime);
-            const label = prompt("Enter label for this timestamp (e.g., 'Introduction'):");
+            const label = prompt("Digite o rótulo para esta marcação (ex: 'Introdução'):");
             if (label) {
                 setTimestamps([...timestamps, { time, label }].sort((a, b) => a.time - b.time));
             }
@@ -128,11 +128,11 @@ const LessonEditor = () => {
                 duration: totalDuration,
                 updatedAt: new Date()
             }, { merge: true });
-            alert('Lesson saved!');
+            alert('Aula salva!');
             navigate(`/admin/course/${courseId}`);
         } catch (error) {
             console.error("Error saving lesson:", error);
-            alert('Error saving lesson');
+            alert('Erro ao salvar aula');
         }
     };
 
@@ -147,16 +147,16 @@ const LessonEditor = () => {
             <div className="mb-6">
                 <Link to={`/admin/course/${courseId}`} className="text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
                     <ArrowLeft size={16} />
-                    <span>Back to Course</span>
+                    <span>Voltar ao Curso</span>
                 </Link>
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold">{isNew ? 'New Lesson' : 'Edit Lesson'}</h1>
+                    <h1 className="text-3xl font-bold">{isNew ? 'Nova Aula' : 'Editar Aula'}</h1>
                     <button
                         onClick={handleSave}
                         className="bg-accent hover:bg-blue-600 text-white px-6 py-2 rounded flex items-center space-x-2"
                     >
                         <Save size={20} />
-                        <span>Save Lesson</span>
+                        <span>Salvar Aula</span>
                     </button>
                 </div>
             </div>
@@ -165,7 +165,7 @@ const LessonEditor = () => {
                 <div className="space-y-6">
                     <div className="bg-secondary p-6 rounded-lg space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Lesson Title</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Título da Aula</label>
                             <input
                                 type="text"
                                 value={title}
@@ -174,7 +174,7 @@ const LessonEditor = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Descrição</label>
                             <textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -185,7 +185,7 @@ const LessonEditor = () => {
                     </div>
 
                     <div className="bg-secondary p-6 rounded-lg">
-                        <h3 className="font-bold mb-4">Video Source</h3>
+                        <h3 className="font-bold mb-4">Fonte do Vídeo</h3>
 
                         {!videoUrl ? (
                             <div
@@ -193,7 +193,7 @@ const LessonEditor = () => {
                                 onClick={() => fileInputRef.current?.click()}
                             >
                                 <Upload size={48} className="mx-auto text-gray-500 mb-2" />
-                                <p className="text-gray-400">Click to upload video</p>
+                                <p className="text-gray-400">Clique para enviar vídeo</p>
                                 <input
                                     type="file"
                                     ref={fileInputRef}
@@ -215,7 +215,7 @@ const LessonEditor = () => {
                                     onClick={() => setVideoUrl('')}
                                     className="text-sm text-red-400 hover:text-red-300"
                                 >
-                                    Remove Video
+                                    Remover Vídeo
                                 </button>
                             </div>
                         )}
@@ -223,7 +223,7 @@ const LessonEditor = () => {
                         {isUploading && (
                             <div className="mt-4">
                                 <div className="flex justify-between text-xs text-gray-400 mb-1">
-                                    <span>Uploading...</span>
+                                    <span>Enviando...</span>
                                     <span>{Math.round(uploadProgress)}%</span>
                                 </div>
                                 <div className="w-full bg-gray-700 rounded-full h-2">
@@ -239,20 +239,20 @@ const LessonEditor = () => {
 
                 <div className="bg-secondary p-6 rounded-lg h-fit">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold">Timestamps</h3>
+                        <h3 className="font-bold">Marcações de Tempo</h3>
                         <button
                             onClick={addTimestamp}
                             disabled={!videoUrl}
                             className="text-sm bg-primary hover:bg-gray-900 px-3 py-1 rounded flex items-center space-x-1 disabled:opacity-50"
                         >
                             <Clock size={14} />
-                            <span>Add Current Time</span>
+                            <span>Adicionar Tempo Atual</span>
                         </button>
                     </div>
 
                     <div className="space-y-2">
                         {timestamps.length === 0 ? (
-                            <p className="text-sm text-gray-500 italic">No timestamps added.</p>
+                            <p className="text-sm text-gray-500 italic">Nenhuma marcação adicionada.</p>
                         ) : (
                             timestamps.map((ts, index) => (
                                 <div key={index} className="flex justify-between items-center bg-primary p-2 rounded">

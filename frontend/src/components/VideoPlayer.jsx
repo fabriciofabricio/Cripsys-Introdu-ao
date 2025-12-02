@@ -22,14 +22,14 @@ const VideoPlayer = forwardRef(({ videoUrl, onComplete, isCompleted }, ref) => {
                     controls
                     className="w-full h-full object-contain"
                 >
-                    Your browser does not support the video tag.
+                    Seu navegador não suporta a tag de vídeo.
                 </video>
             </div>
 
             <div className="flex justify-between items-center bg-secondary p-4 rounded-lg">
                 <div>
-                    <h3 className="font-medium text-lg">Lesson Actions</h3>
-                    <p className="text-sm text-gray-400">Track your progress</p>
+                    <h3 className="font-medium text-lg">Ações da Aula</h3>
+                    <p className="text-sm text-gray-400">Acompanhe seu progresso</p>
                 </div>
 
                 <button
@@ -40,7 +40,7 @@ const VideoPlayer = forwardRef(({ videoUrl, onComplete, isCompleted }, ref) => {
                         }`}
                 >
                     <CheckCircle size={20} />
-                    <span>{isCompleted ? 'Completed' : 'Mark as Complete'}</span>
+                    <span>{isCompleted ? 'Concluído' : 'Marcar como Concluído'}</span>
                 </button>
             </div>
         </div>

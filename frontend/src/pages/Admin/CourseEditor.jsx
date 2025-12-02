@@ -54,7 +54,7 @@ const CourseEditor = () => {
             (error) => {
                 console.error("Upload error:", error);
                 setIsUploading(false);
-                alert("Upload failed");
+                alert("Falha no envio");
             },
             async () => {
                 const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
@@ -88,15 +88,15 @@ const CourseEditor = () => {
 
             await setDoc(doc(db, "courses", id), courseData, { merge: true });
             if (isNew) navigate(`/admin/course/${id}`);
-            alert('Course saved successfully!');
+            alert('Curso salvo com sucesso!');
         } catch (error) {
             console.error("Error saving course:", error);
-            alert('Error saving course');
+            alert('Erro ao salvar curso');
         }
     };
 
     const addModule = () => {
-        const title = prompt("Enter module title:");
+        const title = prompt("Digite o título do módulo:");
         if (title) {
             const newModule = {
                 id: Date.now().toString(),
@@ -107,23 +107,23 @@ const CourseEditor = () => {
         }
     };
 
-    if (loading) return <MainLayout>Loading...</MainLayout>;
+    if (loading) return <MainLayout>Carregando...</MainLayout>;
 
     return (
         <MainLayout>
             <div className="mb-6">
                 <Link to="/admin" className="text-gray-400 hover:text-white flex items-center space-x-2 mb-4">
                     <ArrowLeft size={16} />
-                    <span>Back to Dashboard</span>
+                    <span>Voltar ao Painel</span>
                 </Link>
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold">{isNew ? 'Create Course' : 'Edit Course'}</h1>
+                    <h1 className="text-3xl font-bold">{isNew ? 'Criar Curso' : 'Editar Curso'}</h1>
                     <button
                         onClick={handleSave}
                         className="bg-accent hover:bg-blue-600 text-white px-6 py-2 rounded flex items-center space-x-2"
                     >
                         <Save size={20} />
-                        <span>Save Course</span>
+                        <span>Salvar Curso</span>
                     </button>
                 </div>
             </div>
@@ -132,7 +132,7 @@ const CourseEditor = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-secondary p-6 rounded-lg space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Course Title</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Título do Curso</label>
                             <input
                                 type="text"
                                 value={title}
@@ -141,7 +141,7 @@ const CourseEditor = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Description</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Descrição</label>
                             <textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
@@ -152,14 +152,14 @@ const CourseEditor = () => {
                     </div>
                     <div className="bg-secondary p-6 rounded-lg space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Thumbnail</label>
+                            <label className="block text-sm font-medium text-gray-400 mb-1">Miniatura</label>
                             {!thumbnail ? (
                                 <div
                                     className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-accent cursor-pointer transition"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
                                     <ImageIcon size={32} className="mx-auto text-gray-500 mb-2" />
-                                    <p className="text-gray-400 text-sm">Click to upload thumbnail</p>
+                                    <p className="text-gray-400 text-sm">Clique para enviar miniatura</p>
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -194,13 +194,13 @@ const CourseEditor = () => {
 
                     <div className="space-y-4">
                         <div className="flex justify-between items-center">
-                            <h2 className="text-xl font-bold">Modules</h2>
+                            <h2 className="text-xl font-bold">Módulos</h2>
                             <button
                                 onClick={addModule}
                                 className="text-accent hover:text-blue-400 flex items-center space-x-1"
                             >
                                 <Plus size={16} />
-                                <span>Add Module</span>
+                                <span>Adicionar Módulo</span>
                             </button>
                         </div>
 
@@ -210,11 +210,11 @@ const CourseEditor = () => {
                                     <h3 className="font-medium">{module.title}</h3>
                                     <Link
                                         to={!isNew ? `/admin/lesson/${courseId}/${module.id}/new` : '#'}
-                                        onClick={isNew ? () => alert('Please save the course first') : undefined}
+                                        onClick={isNew ? () => alert('Por favor, salve o curso primeiro') : undefined}
                                         className="text-sm bg-primary hover:bg-gray-900 px-3 py-1 rounded flex items-center space-x-1"
                                     >
                                         <Plus size={14} />
-                                        <span>Add Lesson</span>
+                                        <span>Adicionar Aula</span>
                                     </Link>
                                 </div>
                                 <div className="p-4 space-y-2">
@@ -229,11 +229,11 @@ const CourseEditor = () => {
                                                     <Video size={16} className="text-gray-500" />
                                                     <span>{lesson.title}</span>
                                                 </div>
-                                                <span className="text-xs text-gray-500 group-hover:text-accent">Edit</span>
+                                                <span className="text-xs text-gray-500 group-hover:text-accent">Editar</span>
                                             </Link>
                                         ))
                                     ) : (
-                                        <p className="text-sm text-gray-500 italic">No lessons yet.</p>
+                                        <p className="text-sm text-gray-500 italic">Nenhuma aula ainda.</p>
                                     )}
                                 </div>
                             </div>

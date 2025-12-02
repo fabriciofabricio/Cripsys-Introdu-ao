@@ -37,8 +37,8 @@ const CourseList = ({ courses }) => {
                         <p className="text-gray-400 text-sm line-clamp-2">{course.description}</p>
 
                         <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
-                            <span>{course.modulesCount || 0} Modules</span>
-                            <span>{course.level || 'Beginner'}</span>
+                            <span>{course.modulesCount || 0} Módulos</span>
+                            <span>{course.level || 'Iniciante'}</span>
                         </div>
                     </div>
                 </Link>

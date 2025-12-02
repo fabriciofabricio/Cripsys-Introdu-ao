@@ -36,7 +36,7 @@ const AuthForm = () => {
     return (
         <div className="max-w-md mx-auto bg-secondary p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-6 text-center">
-                {isLogin ? 'Welcome Back' : 'Create Account'}
+                {isLogin ? 'Bem-vindo de volta' : 'Criar Conta'}
             </h2>
 
             {error && (
@@ -47,7 +47,7 @@ const AuthForm = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">E-mail</label>
                     <input
                         type="email"
                         value={email}
@@ -58,7 +58,7 @@ const AuthForm = () => {
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Senha</label>
                     <input
                         type="password"
                         value={password}
@@ -72,7 +72,7 @@ const AuthForm = () => {
                     type="submit"
                     className="w-full bg-accent hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition"
                 >
-                    {isLogin ? 'Sign In' : 'Sign Up'}
+                    {isLogin ? 'Entrar' : 'Cadastrar'}
                 </button>
             </form>
 
@@ -81,7 +81,7 @@ const AuthForm = () => {
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-sm text-gray-400 hover:text-white transition"
                 >
-                    {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+                    {isLogin ? "Não tem uma conta? Cadastre-se" : "Já tem uma conta? Entre"}
                 </button>
             </div>
         </div>
