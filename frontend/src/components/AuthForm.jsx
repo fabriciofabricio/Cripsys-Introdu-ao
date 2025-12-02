@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase/config';
+import { auth, db } from '../firebase/config';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 const AuthForm = () => {
@@ -18,7 +19,13 @@ const AuthForm = () => {
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, password);
             } else {
-                await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Create user document in Firestore
+                await setDoc(doc(db, "users", userCredential.user.uid), {
+                    email: email,
+                    role: 'student',
+                    createdAt: new Date()
+                });
             }
             navigate('/');
         } catch (err) {

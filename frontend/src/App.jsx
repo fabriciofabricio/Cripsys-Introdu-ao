@@ -8,6 +8,10 @@ import Home from './pages/Home';
 import Lesson from './pages/Lesson';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import CourseEditor from './pages/Admin/CourseEditor';
+import LessonEditor from './pages/Admin/LessonEditor';
+import SetupAdmin from './pages/SetupAdmin';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -45,7 +49,7 @@ const App = () => {
 
         <Route
           path="/course/:courseId"
-          element={user ? <Home /> : <Navigate to="/login" />}
+          element={user ? <Lesson /> : <Navigate to="/login" />}
         />
 
         <Route
@@ -56,6 +60,25 @@ const App = () => {
         <Route
           path="/dashboard"
           element={user ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        {/* Admin Routes */}
+        <Route
+          path="/admin"
+          element={user ? <AdminDashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/admin/course/:courseId"
+          element={user ? <CourseEditor /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/admin/lesson/:courseId/:moduleId/:lessonId"
+          element={user ? <LessonEditor /> : <Navigate to="/login" />}
+        />
+
+        <Route
+          path="/setup-admin"
+          element={user ? <SetupAdmin /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>

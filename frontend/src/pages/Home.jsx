@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import CourseList from '../components/CourseList';
 import MainLayout from '../layouts/MainLayout';
+import { db } from '../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 const Home = () => {
     const [courses, setCourses] = useState([]);
 
     useEffect(() => {
-        // Mock data - in production this would come from Firestore
-        setCourses([
-            {
-                id: 'intro-cripsys',
-                title: 'Introdução ao Cripsys',
-                description: 'Aprenda o básico do sistema Cripsys e como configurar sua conta.',
-                thumbnail: null, // Placeholder will be used
-                modulesCount: 4,
-                duration: '2h 15m',
-                level: 'Iniciante'
-            },
-            {
-                id: 'advanced-features',
-                title: 'Funcionalidades Avançadas',
-                description: 'Domine as ferramentas avançadas de análise e relatórios.',
-                thumbnail: null,
-                modulesCount: 6,
-                duration: '3h 45m',
-                level: 'Avançado'
+        const fetchCourses = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "courses"));
+                const coursesData = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setCourses(coursesData);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
             }
-        ]);
+        };
+
+        fetchCourses();
     }, []);
 
     return (

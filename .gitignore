@@ -20,3 +20,6 @@ ui-debug.log
 *.njsproj
 *.sln
 *.sw?
+
+# Security
+frontend/src/firebase/config.js

@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import { CheckCircle } from 'lucide-react';
 
-const VideoPlayer = ({ videoUrl, onComplete, isCompleted }) => {
+const VideoPlayer = forwardRef(({ videoUrl, onComplete, isCompleted }, ref) => {
+    const videoRef = useRef(null);
+
+    useImperativeHandle(ref, () => ({
+        jumpToTime: (time) => {
+            if (videoRef.current) {
+                videoRef.current.currentTime = time;
+                videoRef.current.play();
+            }
+        }
+    }));
+
     return (
         <div className="space-y-4">
             <div className="aspect-video bg-black rounded-lg overflow-hidden shadow-xl">
                 <video
+                    ref={videoRef}
                     src={videoUrl}
                     controls
                     className="w-full h-full object-contain"
-                    poster="/placeholder-video-poster.png" // You might want to add a placeholder
                 >
                     Your browser does not support the video tag.
                 </video>
@@ -35,6 +46,8 @@ const VideoPlayer = ({ videoUrl, onComplete, isCompleted }) => {
             </div>
         </div>
     );
-};
+});
+
+VideoPlayer.displayName = 'VideoPlayer';
 
 export default VideoPlayer;
